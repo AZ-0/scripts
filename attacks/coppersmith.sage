@@ -1,3 +1,5 @@
+# FROM https://github.com/defund/coppersmith
+
 import itertools
 
 def small_roots(f, bounds, m=1, d=None):
