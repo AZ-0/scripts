@@ -4,7 +4,7 @@ def find_factor(N, m):
     
     for a in primes(isqrt(N)):
         for k in range(1, v + 1):
-            g = gcd(pow(a, m >> k, N).lift() - 1, N)
+            g = gcd(pow(a, m >> k, N) - 1, N)
             if 1 < g < N:
                 return g
 
