@@ -1,3 +1,5 @@
+from scripts.attacks.factoring.partial import small_factors
+
 def low_order_points(p, a, bound):
     '''Find points of order lower than `bound` on invalid curves y² = x³ + ax + b (mod `p`)'''
     b = 0
@@ -9,7 +11,7 @@ def low_order_points(p, a, bound):
         R = EllipticCurve(GF(p), [a, b]).random_point()
         o = R.order()
 
-        for (q, v) in factor(o):
+        for (q, v) in small_factors(o):
             if q > bound or q in primes:
                 continue
 
