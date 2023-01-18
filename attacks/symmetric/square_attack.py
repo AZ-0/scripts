@@ -1,5 +1,5 @@
-from spn import State, rotate
-from aes import AES
+from spn import State, bytes2state
+from aes import AES, expand_key, expand_key_inv
 
 from functools import reduce
 from operator import xor
@@ -26,9 +26,12 @@ def square_attack(aes: AES, i: int, constants: list[int]=[0]):
     return candidates
 
 if __name__ == '__main__':
-    keys = [rotate([*range(16)], 2*i) for i in range(5)]
-    aes = AES(keys)
+    key = b'0123456789ABCDEF'
+    aes = AES(expand_key(key, 4))
 
+    subkey = []
     for i in range(16):
         k, = square_attack(aes, i, constants=[0, 1])
-        assert k == keys[4][i]
+        subkey.append(k)
+    
+    assert expand_key_inv(subkey, 4) == bytes2state(key)

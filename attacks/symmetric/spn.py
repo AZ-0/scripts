@@ -1,33 +1,41 @@
 from abc import ABC, abstractmethod
+from functools import reduce
+from operator import xor
 
 State = list[int]
 
-def transpose(state: State, n: int=4) -> State:
+def transpose(state: State) -> State:
+    from math import isqrt
+    n = isqrt(len(state))
     return [state[i + n*j] for i in range(n) for j in range(n)]
 
-def bytes2states(data: bytes, n: int=4) -> State:
+def bytes2state(data: bytes) -> State:
     return transpose(data)
 
-def state2bytes(state: State, n: int=4) -> bytes:
-    return bytes(transpose(state, n=n))
+def state2bytes(state: State) -> bytes:
+    return bytes(transpose(state))
 
 def rotate(state: State, n: int) -> State:
+    """Rotate left by n"""
     return state[n:] + state[:n]
 
 def blocks(state: State, n: int) -> list[State]:
     return [*zip(* [iter(state)] * n)]
 
+def xors(*x: State) -> State:
+    return [reduce(xor, t) for t in zip(*x)]
+
+def sbox_inv(sbox: list[int]) -> list[int]:
+    return [sbox.index(i) for i in range(len(sbox))]
+
 class SPN(ABC):
     def __init__(self, keys: list[State]=None, sbox: list[int]=None) -> None:
         self.keys = keys
         self.sbox = sbox
-        self.sbox_inv = [sbox.index(i) for i in range(len(sbox))] if sbox else None
-
-    def add(self, s, k):
-        return s ^ k
+        self.sbox_inv = sbox_inv(sbox) if sbox else None
 
     def add_round_key(self, state: State, i: int) -> State:
-        return [self.add(s, k) for s, k in zip(state, self.keys[i])]
+        return xors(state, self.keys[i])
 
     def substitute(self, state: State) -> State:
         return [self.sbox[s] for s in state]
@@ -69,7 +77,7 @@ class SPN(ABC):
         for i in range(rounds):
             state = self.round(state, i+1)
         return state
-    
+
     def encrypt(self, state: State, rounds: int) -> State:
         state = self.partial_encrypt(state, rounds-1)
         state = self.final_round(state)
