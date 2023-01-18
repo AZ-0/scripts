@@ -130,7 +130,7 @@ MIX_COLUMN_INV_MAT = [
 
 ROUNDS = 10
 
-from sboxes import AES as SBOX
+from sbox import AES as SBOX
 from spn import *
 
 from functools import reduce
@@ -155,13 +155,13 @@ class AES(SPN):
         return state
 
     def mix_column(self, state: State, mat=MIX_COLUMN_MAT) -> State:
-        state = list(state)
+        state = transpose(state)
 
         for k in range(0, 16, 4):
             col = state[k:k+4]
             state[k:k+4] = [reduce(xor, [MULT[mat[j][i]][col[i]] for i in range(4)]) for j in range(4)]
 
-        return state
+        return transpose(state)
 
     def mix_column_inv(self, state: State) -> State:
         return self.mix_column(state, MIX_COLUMN_INV_MAT)
