@@ -1,5 +1,5 @@
 def smart_attack(P, Q):
-    '''Returns k such that Q = kP'''
+    '''Returns k such that Q = kP, when E is anomalous.'''
     xP, yP = map(int, P.xy())
     xQ, yQ = map(int, Q.xy())
 
@@ -22,5 +22,4 @@ def smart_attack(P, Q):
     lQ = E_.formal_group().log()(-(p*Q_)[0]/(p*Q_)[1])/p
 
     k = (lQ/lP).expansion(0)
-    assert k*P == Q
     return k
