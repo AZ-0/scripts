@@ -1,0 +1,1 @@
+SEETF 2023/shard: dlog mod p^2 in Z/p^3 (p-adic logarithm genesis)
