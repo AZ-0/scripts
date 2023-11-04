@@ -1,4 +1,5 @@
 from operator import lshift, rshift
+import random
 
 # Most of this code was shamelessly stolen from StealthyDev.
 # Although I did make some changes here and there and added some functions.
@@ -75,3 +76,7 @@ def uints_to_randbits(uints, bits):
         u >>= (32 - bits%32)
 
     return n | u << 32*L
+
+def setstate(leaks):
+    assert len(leaks) == 624
+    random.setstate((3, tuple([*map(untemper, leaks), 624]), None))
