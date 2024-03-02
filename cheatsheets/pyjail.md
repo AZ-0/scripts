@@ -45,17 +45,23 @@ builtins = _imp.create_builtin(spec) # auditless!
 getattr(obj, 'attr')
 vars(obj)['attr']
 obj.__dict__['attr']
+obj.__getattribute__('attr')
 object.__getattr__(obj, 'attr')
 ```
 ```py
->>> from string import Formatter
->>> Formatter().get_field("0.__class__", [1337], kwargs={})[0]
-<class 'int'>
+from string import Formatter
+Formatter().get_field("0.__class__", [1337], kwargs={})[0]
 ```
 ```py
 match obj:
     case Class(attr=v):
         print('obj.attr =', v)
+```
+```py
+try:
+    '{0.__class__.thisdoesntexist}'.format(1337)
+except AttributeError as e:
+    print(e.obj)
 ```
 
 ### Retrieving global namespace
