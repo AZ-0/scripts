@@ -9,11 +9,11 @@ def PH_partial(h, g, p, fact_phi):
 
     phi = p-1
     for pi, ei in fact_phi:
-        gi = pow(g, phi//(pi^ei), p)
-        hi = pow(h, phi//(pi^ei), p)
-        xi = discrete_log_lambda(k(hi), k(gi), bounds = (0, pi^ei))
+        gi = pow(g, phi//(pi**ei), p)
+        hi = pow(h, phi//(pi**ei), p)
+        xi = discrete_log_lambda(k(hi), k(gi), bounds = (0, pi**ei))
         res.append(int(xi))
-        mod.append(int(pi^ei))
+        mod.append(int(pi**ei))
 
     x, m = CRT(res, mod), lcm(mod)
     assert pow(g, x * phi//m, p) == pow(h, phi//m, p)
