@@ -77,7 +77,7 @@ except AttributeError as e:
 # Globals from where the class was initialized
 >>> os._wrap_close.close.__globals__
 ```
-#### namespace from frames
+### Retrieving frames
 ```py
 try:
     1/0
@@ -89,9 +89,19 @@ except Exception as e: # you don't need "Exception" in bytecode
 [x:=[], x.append(b.gi_frame.f_back.f_builtins for b in x), *x[0]][-1]
 ```
 ```py
-(()for(_)in()).gi_frame.f_back.f_builtins
+(()for(_)in()).gi_frame.f_back.f_locals
 ```
-
+```py
+import sys
+sys.get_frame()
+```
+This one is auditless:
+```py
+s = sys.modules['_signal']
+s.signal(2, print)
+s.raise_signal(2)
+# 2 <frame at 0x7fac99ffefc0, file '<stdin>', line 1, code <module>>
+```
 
 ### Executing code
 ```py
