@@ -11,6 +11,7 @@ def _csidh_action(E, order, n, facs):
         # print('.', end='', flush=True)
         P = k*E.random_point()
         o = order_factored(P, order, facs) # much faster than P.order()
+        P.set_order(o)
 
         d = gcd(n, o)
         P *= o//d
@@ -43,7 +44,7 @@ def csidh_action(E, es, p_facs=None, order=None):
     * "E" -- elliptic curve
 
     * "es" -- list of integers: (ei)
-    
+
     * "p_facs" (optional) -- list of integers: some prime factors (qi) of p+1 (default: every prime factor besides 2)
 
     * "order" (optional) -- order of E
@@ -79,8 +80,10 @@ def csidh_action(E, es, p_facs=None, order=None):
 
     E = _csidh_action(E, order, pos_n, pos_facs)
     E = _dual_action(E, order, neg_n, neg_facs)
-    return E.montgomery_model()
+    E = E.montgomery_model()
 
+    proof.all(_old_proof)
+    return E
 
 if __name__ == '__main__':
     E0 = EllipticCurve(GF(419), [1, 0])
