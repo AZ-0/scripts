@@ -11,7 +11,7 @@ def _csidh_action(E, order, n, facs):
         # print('.', end='', flush=True)
         P = k*E.random_point()
         o = order_factored(P, order, facs) # much faster than P.order()
-        P.set_order(o)
+        P._order = o
 
         d = gcd(n, o)
         P *= o//d
