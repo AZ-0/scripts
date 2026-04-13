@@ -1,3 +1,11 @@
+# pari implements half gcd internally, see https://github.com/sagemath/sage/issues/40016
+
+def GCD(a, b):
+    P = a.parent()
+    g = P(a._pari_with_name().gcd(b._pari_with_name()))
+    return g.monic()
+
+
 # Stolen from https://github.com/rkm0959/rkm0959_implements/tree/main/Half_GCD
 
 def HGCD(a, b):
@@ -18,7 +26,7 @@ def HGCD(a, b):
     RET10 = S11 * R00 + (S10 - q * S11) * R10
     RET11 = S11 * R01 + (S10 - q * S11) * R11
     return RET00, RET01, RET10, RET11
-    
+
 def GCD(a, b):
     print(a.degree(), b.degree())
     q, r = a.quo_rem(b)
